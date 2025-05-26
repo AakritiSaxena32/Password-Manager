@@ -126,6 +126,14 @@ def login():
 
         # Remember which user has logged in
         session["user_id"] = rows[0]["id"]
+        session["encryption_key"] = base64.b64encode(
+            hashlib.pbkdf2_hmac(
+                'sha256',
+                request.form.get("password").encode('utf-8'),
+                b'static_salt_or_user_specific_salt',  # Replace if per-user
+                100000
+            )
+        ).decode('utf-8')
 
         # Redirect user to home page
         return redirect("/")
